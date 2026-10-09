@@ -1,0 +1,24 @@
+{% extends 'layout/base.twig' %}
+
+{# The home page is made of blocks, in the order and of the kinds an administrator sets
+   (Administration → Home page). While the page is edited in place, every block gets its
+   tools from the administration theme. Each kind of block is drawn by its partial in home/. #}
+{% block page %}
+{% include '@admin/inline/_bar.twig' with {page_path: '/admin/home', add_types: ['hero', 'categories', 'text', 'offers', 'providers', 'image', 'links']} only %}
+{% for block in home_blocks(edit_mode()) %}
+    {% if edit_mode() %}
+        {% include '@admin/inline/_block.twig' with {block: block, page_path: '/admin/home', partial: 'home/_' ~ block.type ~ '.twig', fields: block_fields('home')[block.type] ?? [], label_key: 'core.home.type.' ~ block.type, deletable: true, add_types: ['hero', 'categories', 'text', 'offers', 'providers', 'image', 'links']} %}
+    {% elseif block.enabled %}
+        {% include 'home/_' ~ block.type ~ '.twig' with {block: block} %}
+    {% endif %}
+{% endfor %}
+
+{# What extensions show on the home page, e.g. the latest posts of a blog. #}
+{% for section in home_sections() %}
+    <section class="band band-white">
+        <div class="container">
+            {% include section.template with section.data %}
+        </div>
+    </section>
+{% endfor %}
+{% endblock %}

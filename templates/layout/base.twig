@@ -1,0 +1,181 @@
+{% import '_icons.twig' as icons %}
+<!DOCTYPE html>
+{# A fixed choice of the account is written out; without one the stylesheet
+   follows the device (prefers-color-scheme). #}
+{% set scheme = color_scheme() %}
+<html lang="{{ locale() }}"{% if scheme != 'auto' %} data-theme="{{ scheme }}"{% endif %}>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {# Captured once, so the page's own title (or lack of one) is reused for og:title without computing it twice. #}
+    {% set page_title %}{% block title %}{{ site_name }}{% endblock %}{% endset %}
+    <title>{{ page_title }}</title>
+    {# Likewise for the description: a page sets it by overriding this block, e.g. {% block meta_description %}{{ offer.summary }}{% endblock %}. #}
+    {% set page_description %}{% block meta_description %}{{ meta_description() }}{% endblock %}{% endset %}
+    {% if page_description %}<meta name="description" content="{{ page_description }}">{% endif %}
+    <meta property="og:site_name" content="{{ site_name }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ page_title }}">
+    {% if page_description %}<meta property="og:description" content="{{ page_description }}">{% endif %}
+    <meta property="og:url" content="{{ url(current_path(), null, true) }}">
+    {# A page overrides this with its own picture, e.g. an offer's first image; the path it gives is made absolute the same way. #}
+    {% set page_image %}{% block meta_image %}{{ site_logo('light') }}{% endblock %}{% endset %}
+    {% if page_image %}
+        <meta property="og:image" content="{{ site_url }}{{ page_image }}">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:image" content="{{ site_url }}{{ page_image }}">
+    {% endif %}
+    {% if site_favicon() %}<link rel="icon" href="{{ site_favicon() }}">{% endif %}
+    {% for language in locale_urls() %}
+        <link rel="alternate" hreflang="{{ language.locale }}" href="{{ language.absolute_url }}">
+    {% endfor %}
+    {# The same address as the stylesheet's @font-face uses (it resolves relative to theme.css,
+       which has no version in its path): with a cache-busting "?v=" here, the browser would
+       fetch the font twice. Assets are always served from /assets/theme/. #}
+    <link rel="preload" href="/assets/theme/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{ theme_asset('theme.css') }}">
+    {# The core's values from Administration → Design, and the pencil's rules: after the theme's own sheet. #}
+    <link rel="stylesheet" href="{{ design_url() }}">
+    {# Both scripts and the menu's markup come from the default theme. #}
+    <script src="{{ theme_asset('password-toggle.js') }}" defer data-show="{{ trans('core.password.show') }}" data-hide="{{ trans('core.password.hide') }}"></script>
+    {% if edit_mode() %}<script src="{{ admin_asset('editor.js') }}" defer></script>
+    <script src="{{ admin_asset('inline-edit.js') }}" defer></script>{% endif %}
+    {% if account %}
+        <script src="{{ theme_asset('account-menu.js') }}" defer></script>
+        {# Polls the unread badges (inbox envelope, notification bell) - without this they stay hidden forever. #}
+        <script src="{{ theme_asset('unread.js') }}" defer></script>
+    {% endif %}
+    {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+{# Signed in as someone else: the bar with the way back. #}
+{% include 'layout/_impersonation.twig' %}
+<a class="skip-link" href="#content">{{ trans('theme.skip') }}</a>
+
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="{{ url('/') }}">
+            {% set logoLight = site_logo('light') %}
+            {% if logoLight %}
+                {# The mark is the theme's own; a site's own logo replaces it outright. The dark variant, where there is one, is swapped in by CSS - see theme.css. #}
+                <img class="brand-logo brand-logo-light" src="{{ logoLight }}" alt="{{ site_name }}">
+                {% set logoDark = site_logo('dark') %}
+                {% if logoDark != logoLight %}<img class="brand-logo brand-logo-dark" src="{{ logoDark }}" alt="{{ site_name }}">{% endif %}
+            {% else %}
+                <span class="brand-mark">{{ icons.icon('logo') }}</span>
+                <span class="brand-text">
+                    <span class="brand-name">{{ site_name }}</span>
+                    <span class="brand-subtitle">{{ trans('theme.brand.subtitle') }}</span>
+                </span>
+            {% endif %}
+        </a>
+
+        <nav class="main-nav" aria-label="{{ trans('core.nav.main') }}">
+            {# Only where an extension adds a kind of offer is there a catalogue. #}
+            {% if has_catalogue() %}
+                <a href="{{ url('/offers') }}">{{ trans('core.nav.offers') }}</a>
+                <a href="{{ url('/providers') }}">{{ trans('core.nav.providers') }}</a>
+            {% endif %}
+            {% if module('requests') %}
+                <a href="{{ url('/requests') }}">{{ trans('core.nav.requests') }}</a>
+            {% endif %}
+            {% if module('subscriptions') %}
+                <a href="{{ url('/subscriptions') }}">{{ trans('core.subscriptions.nav') }}</a>
+            {% endif %}
+            {% for link in page_links('header') %}
+                <a href="{{ link.url }}">{{ link.title }}</a>
+            {% endfor %}
+        </nav>
+
+        <div class="header-actions">
+            {% if has_catalogue() %}
+                <a class="icon-action" href="{{ url('/offers') }}" aria-label="{{ trans('core.offers.search') }}">{{ icons.icon('search') }}</a>
+            {% endif %}
+            {% for link in nav_links() %}
+                <a class="pill-link" href="{{ link.url }}">{{ link.title }}</a>
+            {% endfor %}
+            {% if account %}
+                {% if can('core.admin.access') %}
+                    <a href="{{ url('/admin') }}">{{ trans('core.nav.admin') }}</a>
+                {% endif %}
+                {% if provider_status() %}
+                    <a href="{{ url('/account/offers') }}">{{ trans('core.offer.mine.title') }}</a>
+                {% endif %}
+                <a href="{{ url('/account') }}">{{ trans('core.nav.dashboard') }}</a>
+                {% if module('inbox') %}
+                    <a class="inbox-link" href="{{ url('/account/messages') }}" aria-label="{{ trans('core.inbox.nav') }}">
+                        {{ icons.icon('mail') }}
+                        {# Filled in by unread.js, which asks the server for the count every few seconds. #}
+                        <span class="unread-badge" hidden data-unread data-url="{{ url('/account/unread') }}" data-poll="{{ poll_seconds() }}" data-label="{{ trans('core.account.unread.label') }}"></span>
+                    </a>
+                {% endif %}
+                {% if module('notifications') %}
+                    <a class="inbox-link" href="{{ url('/account/notifications') }}" aria-label="{{ trans('core.notification.nav') }}">
+                        {{ icons.icon('bell') }}
+                        <span class="unread-badge" hidden data-unread data-url="{{ url('/account/notifications/unread') }}" data-poll="{{ poll_seconds() }}" data-label="{{ trans('core.account.unread.label') }}"></span>
+                    </a>
+                {% endif %}
+                {% include 'layout/_account_menu.twig' %}
+            {% else %}
+                <a href="{{ url('/login') }}">{{ trans('core.nav.login') }}</a>
+                {% if registration_open() %}
+                    <a class="button" href="{{ url('/register') }}">{{ trans('core.nav.register') }}</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<main id="content">
+    {% if flashes %}
+        <div class="container flashes">
+            {% for type, message in flashes %}
+                <p class="flash flash-{{ type }}" role="status">{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {# A page that brings its own full-width sections replaces "page";
+       every other page only fills "content" and gets the centred column. #}
+    {% block page %}
+        <div class="container page">
+            {% block content %}{% endblock %}
+        </div>
+    {% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div class="footer-brand">
+            {% set logoLight = site_logo('light') %}
+            {% if logoLight %}
+                <img class="brand-logo brand-logo-light small" src="{{ logoLight }}" alt="{{ site_name }}">
+                {% set logoDark = site_logo('dark') %}
+                {% if logoDark != logoLight %}<img class="brand-logo brand-logo-dark small" src="{{ logoDark }}" alt="{{ site_name }}">{% endif %}
+            {% else %}
+                <span class="brand-mark small">{{ icons.icon('logo') }}</span>
+            {% endif %}
+            <strong>{{ site_name }}</strong>
+            <span>© {{ 'now'|date('Y') }}</span>
+        </div>
+        <nav aria-label="{{ trans('core.nav.footer') }}">
+            <a href="{{ url('/handbook') }}">{{ trans('core.nav.handbook') }}</a>
+            {% for link in page_links('footer') %}
+                <a href="{{ link.url }}">{{ link.title }}</a>
+            {% endfor %}
+        </nav>
+        {% set languages = locale_urls() %}
+        {% if languages|length > 1 %}
+            <nav aria-label="{{ trans('core.nav.language') }}" class="language-menu">
+                {% for language in languages %}
+                    {% if language.current %}
+                        <span aria-current="true" lang="{{ language.locale }}">{{ language.name }}</span>
+                    {% else %}
+                        <a href="{{ language.url }}" hreflang="{{ language.locale }}" lang="{{ language.locale }}">{{ language.name }}</a>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+        {% endif %}
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{# Receives block: texts (heading). The category tree, as cards. #}
+{% import '_icons.twig' as icons %}
+{% set tree = categories() %}
+{% if tree %}
+    <section class="band band-white">
+        <div class="container">
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">{{ trans('theme.categories.eyebrow') }}</p>
+                    <h2 data-field="heading">{{ block.texts.heading }}</h2>
+                </div>
+                <a class="more" href="{{ url('/offers') }}">{{ trans('theme.categories.all') }} {{ icons.icon('arrow') }}</a>
+            </div>
+            <ul class="category-grid">
+                {% for top in tree|slice(0, 6) %}
+                    <li>
+                        <a href="{{ url(top.path) }}">
+                            <span class="category-mark tone-{{ loop.index0 % 4 + 1 }}" aria-hidden="true">{{ top.name|first|upper }}</span>
+                            <strong>{{ top.name }}</strong>
+                            {% if top.children %}
+                                <span class="muted">{{ top.children|map(child => child.name)|slice(0, 4)|join(', ') }}</span>
+                            {% endif %}
+                            <span class="category-foot">
+                                <small>{{ trans(top.offer_count == 1 ? 'theme.categories.count_one' : 'theme.categories.count', {count: top.offer_count}) }}</small>
+                                <span class="category-arrow" aria-hidden="true">{{ icons.icon('arrow') }}</span>
+                            </span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+{% endif %}

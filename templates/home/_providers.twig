@@ -1,0 +1,14 @@
+{# Receives block: texts (heading), count. The best rated providers. #}
+{% set providers = top_providers(block.count) %}
+{% if providers %}
+    <section class="band band-white">
+        <div class="container">
+            <div class="section-head centered">
+                <p class="eyebrow">{{ trans('theme.providers.eyebrow') }}</p>
+                <h2 data-field="heading">{{ block.texts.heading }}</h2>
+                <p class="muted">{{ trans('theme.providers.lead') }}</p>
+            </div>
+            {% include 'provider/_cards.twig' %}
+        </div>
+    </section>
+{% endif %}

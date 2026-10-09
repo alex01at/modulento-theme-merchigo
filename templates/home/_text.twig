@@ -1,0 +1,22 @@
+{# Receives block: texts (heading, body - cleaned HTML, button_label, button_url). The theme's
+   own seeded block (id "features", see home-layout.json) lays an <ol> of the body out as
+   columns, e.g. three features side by side, instead of reading as plain running text - any
+   other text block an administrator adds reads as plain prose, as the generic type intends. #}
+{% if block.id == 'features' %}
+<section class="feature-band">
+    {% if block.texts.heading or edit_mode() %}<h2 data-field="heading">{{ block.texts.heading }}</h2>{% endif %}
+    {% if block.texts.body or edit_mode() %}
+        <div class="feature-grid" data-field="body" data-html="1">{{ block.texts.body|raw }}</div>
+    {% endif %}
+</section>
+{% else %}
+<section class="band">
+    <div class="container narrow">
+        {% if block.texts.heading or edit_mode() %}<h2 data-field="heading">{{ block.texts.heading }}</h2>{% endif %}
+        {% if block.texts.body or edit_mode() %}<div data-field="body" data-html="1">{{ block.texts.body|raw }}</div>{% endif %}
+        {% if block.texts.button_label and block.texts.button_url %}
+            <p><a class="button large" href="{{ block.texts.button_url starts with '/' ? url(block.texts.button_url) : block.texts.button_url }}">{{ block.texts.button_label }}</a></p>
+        {% endif %}
+    </div>
+</section>
+{% endif %}

@@ -1,0 +1,13 @@
+{# Receives block: texts (heading), count. The latest offers as cards. #}
+{% set offers = latest_offers(block.count) %}
+{% if offers %}
+    <section class="band" id="produkte">
+        <div class="container">
+            <div class="section-head centered">
+                <p class="eyebrow">{{ trans('theme.offers.eyebrow') }}</p>
+                <h2 data-field="heading">{{ block.texts.heading }}</h2>
+            </div>
+            {% include 'offer/_cards.twig' %}
+        </div>
+    </section>
+{% endif %}

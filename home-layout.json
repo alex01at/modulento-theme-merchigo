@@ -1,0 +1,64 @@
+[
+  {
+    "id": "hero",
+    "type": "hero",
+    "enabled": true,
+    "settings": {},
+    "texts": {
+      "de": {
+        "title": "Klarheit für dein Zuhause.",
+        "text": "Funktionale Designobjekte in ruhigen, natürlichen Materialien - für jeden Tag gemacht."
+      },
+      "en": {
+        "title": "Clarity for your home.",
+        "text": "Functional design objects in calm, natural materials - made for everyday use."
+      }
+    }
+  },
+  {
+    "id": "categories",
+    "type": "categories",
+    "enabled": true,
+    "settings": {},
+    "texts": {
+      "de": {
+        "heading": "Hauptkategorien"
+      },
+      "en": {
+        "heading": "Main categories"
+      }
+    }
+  },
+  {
+    "id": "offers",
+    "type": "offers",
+    "enabled": true,
+    "settings": {
+      "count": 6
+    },
+    "texts": {
+      "de": {
+        "heading": "Ausgewählte Produkte"
+      },
+      "en": {
+        "heading": "Selected products"
+      }
+    }
+  },
+  {
+    "id": "features",
+    "type": "text",
+    "enabled": true,
+    "settings": {},
+    "texts": {
+      "de": {
+        "heading": "",
+        "body": "<ol><li><h3>Sorgfältig verarbeitet</h3><p>Natürliche Materialien, auf Langlebigkeit statt auf Trends ausgelegt.</p></li><li><h3>Sicherer Versand</h3><p>Bruchsicher verpackt und innerhalb weniger Werktage geliefert.</p></li><li><h3>In Ruhe entscheiden</h3><p>Rückgabe ohne Angabe von Gründen innerhalb der gesetzlichen Frist.</p></li></ol>"
+      },
+      "en": {
+        "heading": "",
+        "body": "<ol><li><h3>Carefully made</h3><p>Natural materials, built for durability rather than trends.</p></li><li><h3>Safe shipping</h3><p>Packed to survive the trip, delivered within a few working days.</p></li><li><h3>Take your time</h3><p>Return within the statutory period, no reason needed.</p></li></ol>"
+      }
+    }
+  }
+]
