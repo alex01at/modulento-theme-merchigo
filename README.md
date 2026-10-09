@@ -38,6 +38,16 @@ page.
 
 By hand: unpack a release into `themes/merchigo/` of the installation.
 
+## Design values
+
+A fresh installation's accent colour (**Administration → Design**) is
+Modulento's own neutral blue, not this theme's - that page always wins
+over the theme's stylesheet, by design, so an operator can retune any
+theme without editing files. To match the warm look this README describes,
+set the accent to a terracotta such as `#9a3412`, ground `#fcfbfa`, text
+`#44403c`, and the border radius to `5px`–`8px`; rounder than that
+competes with the already-rounded cards.
+
 ## Changing the wording
 
 The texts of the home page itself (heading, lead text, the feature band)
