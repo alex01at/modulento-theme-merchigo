@@ -1,7 +1,7 @@
 {# Receives block: texts (title, text, button_label, button_url). With a catalogue: the search,
    plus an optional second button next to it (e.g. a link to a lookbook or category page). #}
 {% if has_catalogue() %}
-<section class="hero">
+<section data-home-block="{{ block.id }}" class="hero">
     <div class="container narrow">
         <span class="hero-badge">{{ trans('theme.hero.badge') }}</span>
         <h1 data-field="title">{{ block.texts.title }}</h1>
@@ -23,7 +23,7 @@
     </div>
 </section>
 {% else %}
-<section class="hero">
+<section data-home-block="{{ block.id }}" class="hero">
     <div class="container narrow">
         <span class="hero-badge">{{ trans('theme.hero.badge') }}</span>
         <h1 data-field="title">{{ block.texts.title }}</h1>

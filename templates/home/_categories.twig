@@ -2,7 +2,7 @@
 {% import '_icons.twig' as icons %}
 {% set tree = categories() %}
 {% if tree %}
-    <section class="band band-white">
+    <section data-home-block="{{ block.id }}" class="band band-white">
         <div class="container">
             <div class="section-head">
                 <div>

@@ -1,7 +1,7 @@
 {# Receives block: texts (heading), count. The best rated providers. #}
 {% set providers = top_providers(block.count) %}
 {% if providers %}
-    <section class="band band-white">
+    <section data-home-block="{{ block.id }}" class="band band-white">
         <div class="container">
             <div class="section-head centered">
                 <p class="eyebrow">{{ trans('theme.providers.eyebrow') }}</p>

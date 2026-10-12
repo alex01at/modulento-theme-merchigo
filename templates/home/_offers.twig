@@ -1,7 +1,7 @@
 {# Receives block: texts (heading), count. The latest offers as cards. #}
 {% set offers = latest_offers(block.count) %}
 {% if offers %}
-    <section class="band" id="produkte">
+    <section class="band" id="produkte" data-home-block="{{ block.id }}">
         <div class="container">
             <div class="section-head centered">
                 <p class="eyebrow">{{ trans('theme.offers.eyebrow') }}</p>
