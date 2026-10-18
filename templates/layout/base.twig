@@ -71,14 +71,6 @@
         </a>
 
         <nav class="main-nav" aria-label="{{ trans('core.nav.main') }}">
-            {# Only where an extension adds a kind of offer is there a catalogue. #}
-            {% if has_catalogue() %}
-                <a href="{{ url('/offers') }}">{{ trans('core.nav.offers') }}</a>
-                <a href="{{ url('/providers') }}">{{ trans('core.nav.providers') }}</a>
-            {% endif %}
-            {% if module('requests') %}
-                <a href="{{ url('/requests') }}">{{ trans('core.nav.requests') }}</a>
-            {% endif %}
             {% if module('subscriptions') %}
                 <a href="{{ url('/subscriptions') }}">{{ trans('core.subscriptions.nav') }}</a>
             {% endif %}
@@ -91,7 +83,9 @@
             {% if has_catalogue() %}
                 <a class="icon-action" href="{{ url('/offers') }}" aria-label="{{ trans('core.offers.search') }}">{{ icons.icon('search') }}</a>
             {% endif %}
-            {% for link in nav_links() %}
+            {# Catalogue/requests links, whatever an extension added, and the operator's own
+               entries - one list, in the order and under the names set at Administration -> Menu. #}
+            {% for link in main_menu_links() %}
                 <a class="pill-link" href="{{ link.url }}">{{ link.title }}</a>
             {% endfor %}
             {% if account %}
