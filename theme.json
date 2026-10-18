@@ -1,6 +1,7 @@
 {
     "id": "merchigo",
     "name": "Merchigo",
-    "version": "0.1.3",
-    "requires": "0.61.0"
+    "version": "0.1.4",
+    "requires": "0.61.0",
+    "description": "A calm, warm retail look in sand and terracotta, built for the shop extension."
 }
